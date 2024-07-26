@@ -40,10 +40,12 @@ pipeline {
 
        stage('K8S Deploy') {
             steps{   
-            script {
-                sh ('kubectl apply -f  eks-deploy-k8s.yaml')
-                
-            }
+                script {
+               withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'AWS']]) {
+               withKubeConfig(credentialsId: 'newk8s', serverUrl: 'https://6FA1701E503C62578AF7FEAFA50617E7.gr7.us-east-1.eks.amazonaws.com') {
+                  sh 'kubectl apply -f  eks-deploy-k8s.yaml'
+                  }
+               }
 
        }
     }
